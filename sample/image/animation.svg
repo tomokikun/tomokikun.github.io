@@ -1,0 +1,35 @@
+<svg viewBox="0 0 450 450" xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <linearGradient id="linear_gradient">
+      <stop offset="0%" stop-color="lightblue" />
+      <stop offset="100%" stop-color="lightpink" />
+    </linearGradient>
+  </defs>
+  <g>
+    <g>
+      <circle fill="url(#linear_gradient)" cx="200" cy="150" r="30" />
+    </g>
+    <g>
+      <circle fill="url(#linear_gradient)" cx="200" cy="250" r="30" />
+    </g>
+    <path id="motion_path" d="M 200 200 A 50 50 90 0 0 200 100 A 50 50 90 0 0 200 200 A 50 50 90 0 1 200 300 A 50 50 90 0 1 200 200"
+      stroke-linecap="round"
+      fill="transparent" />
+    <use stroke="url(#linear_gradient)" stroke-width="30" stroke-dasharray="100 528" xlink:href="#motion_path">
+      <animate attributeName="stroke-dashoffset"
+        from="100" to="-528"
+        begin="0s" dur="5s"
+        repeatCount="indefinite" />
+    </use>
+    <animateTransform
+      attributeName="transform"
+      type="rotate"
+      begin="0s"
+      dur="9s"
+      fill="freeze"
+      from="0,200,200"
+      to="360,200,200"
+      repeatCount="indefinite" />
+  </g>
+</svg>
