@@ -120,23 +120,108 @@
             transform: translateY(-2px);
         }
 
+        .mobile-notice {
+            background: rgba(255, 193, 7, 0.2);
+            border: 1px solid rgba(255, 193, 7, 0.5);
+            border-radius: 10px;
+            padding: 1em;
+            margin: 1em 0;
+            color: #fff3cd;
+            display: none;
+        }
+
+        .mobile-notice.show {
+            display: block;
+        }
+
         @media (max-width: 768px) {
             body {
-                padding: 1em;
+                padding: 0.5em;
+                font-size: 14px;
+            }
+            
+            .container {
+                width: 100%;
+                max-width: none;
             }
             
             .artwork {
                 padding: 1em;
+                margin-bottom: 1em;
+            }
+            
+            .svg-container {
+                min-height: 280px;
+                overflow: hidden;
+            }
+            
+            .svg-container object, 
+            .svg-container img {
+                width: 100% !important;
+                max-width: 280px !important;
+                height: auto !important;
             }
             
             h1 {
-                font-size: 2em;
+                font-size: 1.8em;
+                margin-bottom: 0.3em;
+            }
+            
+            .description {
+                font-size: 1em;
+                margin: 1em 0;
+                padding: 0 0.5em;
+            }
+            
+            .controls {
+                margin-top: 1.5em;
+            }
+            
+            .btn {
+                display: block;
+                margin: 0.5em auto;
+                max-width: 200px;
+                text-align: center;
+                font-size: 0.9em;
+                padding: 0.7em 1em;
             }
             
             .back-link {
-                top: 1em;
-                left: 1em;
-                padding: 0.6em 1em;
+                position: fixed;
+                top: 0.5em;
+                left: 0.5em;
+                padding: 0.5em 0.8em;
+                font-size: 0.9em;
+                z-index: 20;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 0.25em;
+            }
+            
+            .artwork {
+                padding: 0.75em;
+                border-radius: 10px;
+            }
+            
+            h1 {
+                font-size: 1.5em;
+            }
+            
+            .description {
+                font-size: 0.9em;
+                line-height: 1.5;
+            }
+            
+            .svg-container {
+                min-height: 250px;
+            }
+            
+            .svg-container object, 
+            .svg-container img {
+                max-width: 250px !important;
             }
         }
     </style>
@@ -145,6 +230,10 @@
     <a href="../" class="back-link">← Back to Gallery</a>
     
     <div class="container">
+        <div class="mobile-notice" id="mobileNotice">
+            <strong>Note for mobile users:</strong> This artwork uses advanced SVG filters that may not display properly on some mobile devices. For the best experience, please view on a desktop or laptop computer.
+        </div>
+        
         <div class="artwork">
             <div class="svg-container">
                 <object data="sunset.svg" type="image/svg+xml" style="width: 450px; height: 450px;">
@@ -171,5 +260,28 @@
             <a href="sunset.svg" download="sunset.svg" class="btn">Download SVG</a>
         </div>
     </div>
+
+    <script>
+        // Device detection for mobile notice
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                   window.innerWidth <= 768;
+        }
+
+        // Show mobile notice if on mobile device
+        if (isMobileDevice()) {
+            document.getElementById('mobileNotice').classList.add('show');
+        }
+
+        // Update on window resize
+        window.addEventListener('resize', function() {
+            const notice = document.getElementById('mobileNotice');
+            if (isMobileDevice()) {
+                notice.classList.add('show');
+            } else {
+                notice.classList.remove('show');
+            }
+        });
+    </script>
 </body>
 </html>
