@@ -6,46 +6,39 @@
     <title>Sunset - Animated SVG Art</title>
     <style>
         body {
+            font-family: 'Georgia', serif;
             margin: 0;
-            padding: 0;
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
-            font-family: 'Arial', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            padding: 40px;
+            background: #fafafa;
+            color: #333;
+            line-height: 1.6;
             min-height: 100vh;
-            overflow: hidden;
-        }
-
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
         }
 
         .container {
-            text-align: center;
-            color: white;
-            z-index: 2;
-            position: relative;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .mobile-notice {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 1em;
+            margin-bottom: 2em;
+            color: #856404;
+            display: none;
+        }
+
+        .mobile-notice.show {
+            display: block;
         }
 
         .artwork {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
+            background: white;
+            border: 1px solid #e0e0e0;
             padding: 2em;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
             margin-bottom: 2em;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .artwork:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            text-align: center;
         }
 
         .svg-container {
@@ -55,23 +48,25 @@
             min-height: 450px;
         }
 
-        svg {
+        .svg-container object, 
+        .svg-container img {
             max-width: 100%;
             height: auto;
-            filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.2));
         }
 
         h1 {
-            font-size: 2.5em;
-            margin-bottom: 0.5em;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            font-size: 2.2em;
+            margin-bottom: 0.3em;
+            text-align: center;
+            font-weight: normal;
+            color: #222;
         }
 
         .description {
-            font-size: 1.1em;
-            line-height: 1.6;
+            font-size: 1em;
+            line-height: 1.7;
             margin: 1.5em 0;
-            opacity: 0.9;
+            color: #555;
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
@@ -79,102 +74,63 @@
 
         .controls {
             margin-top: 2em;
+            text-align: center;
         }
 
         .btn {
             display: inline-block;
-            padding: 0.8em 1.5em;
+            padding: 0.7em 1.2em;
             margin: 0.5em;
-            background: rgba(255, 255, 255, 0.2);
+            background: #333;
             color: white;
             text-decoration: none;
-            border-radius: 25px;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            font-size: 1em;
+            transition: background 0.2s ease;
+            font-size: 0.9em;
         }
 
         .btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            background: #555;
         }
 
         .back-link {
             position: fixed;
             top: 2em;
             left: 2em;
-            background: rgba(255, 255, 255, 0.2);
+            background: #333;
             color: white;
             text-decoration: none;
-            padding: 0.8em 1.2em;
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            transition: all 0.3s ease;
+            padding: 0.7em 1em;
+            transition: background 0.2s ease;
             z-index: 10;
         }
 
         .back-link:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
-        }
-
-        .mobile-notice {
-            background: rgba(255, 193, 7, 0.2);
-            border: 1px solid rgba(255, 193, 7, 0.5);
-            border-radius: 10px;
-            padding: 1em;
-            margin: 1em 0;
-            color: #fff3cd;
-            display: none;
-        }
-
-        .mobile-notice.show {
-            display: block;
+            background: #555;
         }
 
         @media (max-width: 768px) {
             body {
-                padding: 0.5em;
-                font-size: 14px;
+                padding: 20px;
             }
             
             .container {
-                width: 100%;
                 max-width: none;
             }
             
             .artwork {
-                padding: 1em;
-                margin-bottom: 1em;
+                padding: 1.5em;
             }
             
             .svg-container {
-                min-height: 280px;
-                overflow: hidden;
-            }
-            
-            .svg-container object, 
-            .svg-container img {
-                width: 100% !important;
-                max-width: 280px !important;
-                height: auto !important;
+                min-height: 300px;
             }
             
             h1 {
                 font-size: 1.8em;
-                margin-bottom: 0.3em;
             }
             
             .description {
-                font-size: 1em;
-                margin: 1em 0;
-                padding: 0 0.5em;
-            }
-            
-            .controls {
-                margin-top: 1.5em;
+                font-size: 0.95em;
             }
             
             .btn {
@@ -182,28 +138,27 @@
                 margin: 0.5em auto;
                 max-width: 200px;
                 text-align: center;
-                font-size: 0.9em;
-                padding: 0.7em 1em;
             }
             
             .back-link {
-                position: fixed;
-                top: 0.5em;
-                left: 0.5em;
-                padding: 0.5em 0.8em;
+                top: 1em;
+                left: 1em;
+                padding: 0.6em 0.8em;
                 font-size: 0.9em;
-                z-index: 20;
             }
         }
 
         @media (max-width: 480px) {
             body {
-                padding: 0.25em;
+                padding: 15px;
             }
             
             .artwork {
-                padding: 0.75em;
-                border-radius: 10px;
+                padding: 1em;
+            }
+            
+            .svg-container {
+                min-height: 250px;
             }
             
             h1 {
@@ -212,16 +167,17 @@
             
             .description {
                 font-size: 0.9em;
-                line-height: 1.5;
+                line-height: 1.6;
             }
             
-            .svg-container {
-                min-height: 250px;
+            .btn {
+                font-size: 0.85em;
+                padding: 0.6em 1em;
             }
             
-            .svg-container object, 
-            .svg-container img {
-                max-width: 250px !important;
+            .back-link {
+                font-size: 0.85em;
+                padding: 0.5em 0.7em;
             }
         }
     </style>
