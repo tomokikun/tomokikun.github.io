@@ -4,9 +4,9 @@
 
 This artwork originates from a profound personal experience with the nature of perception and change. 
 
-The sunset's transformation is so gradual that it becomes invisible to our focused attention. The extremely slow change of the sky's color, the subtle evolution of cloud forms, and the shifting hues remain unrecognized when we stare directly at them. But the moment we look away and then return - 目を逸らしたら - the change becomes suddenly, dramatically apparent.
+The sunset's transformation is so gradual that it becomes invisible to our focused attention. The extremely slow change of the sky's color, the subtle evolution of cloud forms, and the shifting hues remain unrecognized when we stare directly at them. But the moment we look away and then return, the change becomes suddenly, dramatically apparent.
 
-This piece captures that moment of recognition, that感動 (kandō) - the moving emotional impact of suddenly perceiving what was always happening but remained hidden from direct observation.
+This piece captures that moment of recognition - the moving emotional impact of suddenly perceiving what was always happening but remained hidden from direct observation.
 
 ## Visual Expression
 
