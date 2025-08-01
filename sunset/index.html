@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sunset - Animated SVG Art</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            text-align: center;
+            color: white;
+            z-index: 2;
+            position: relative;
+        }
+
+        .artwork {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2em;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2em;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .artwork:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+        }
+
+        .svg-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 450px;
+        }
+
+        svg {
+            max-width: 100%;
+            height: auto;
+            filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.2));
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 0.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .description {
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin: 1.5em 0;
+            opacity: 0.9;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .controls {
+            margin-top: 2em;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.8em 1.5em;
+            margin: 0.5em;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            font-size: 1em;
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-link {
+            position: fixed;
+            top: 2em;
+            left: 2em;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            padding: 0.8em 1.2em;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .back-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1em;
+            }
+            
+            .artwork {
+                padding: 1em;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .back-link {
+                top: 1em;
+                left: 1em;
+                padding: 0.6em 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="../" class="back-link">← Back to Gallery</a>
+    
+    <div class="container">
+        <div class="artwork">
+            <div class="svg-container">
+                <object data="sunset.svg" type="image/svg+xml" style="width: 450px; height: 450px;">
+                    <img src="sunset.svg" alt="Sunset Animation" />
+                </object>
+            </div>
+        </div>
+        
+        <h1>Sunset</h1>
+        <p class="description">
+            An animated SVG artwork featuring fluid, organic motion and vibrant gradients. 
+            The piece uses turbulence filters and displacement mapping to create a mesmerizing, 
+            ever-evolving visual experience that captures the essence of a dynamic sunset.
+        </p>
+        
+        <div class="controls">
+            <a href="sunset.svg" target="_blank" class="btn">View SVG Source</a>
+            <a href="sunset.svg" download="sunset.svg" class="btn">Download SVG</a>
+        </div>
+    </div>
+</body>
+</html>
