@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tomoki's Creative Works</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 0.5em;
+            text-align: center;
+        }
+        .subtitle {
+            text-align: center;
+            font-size: 1.2em;
+            margin-bottom: 3em;
+            opacity: 0.9;
+        }
+        .works {
+            display: grid;
+            gap: 2em;
+        }
+        .work-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2em;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .work-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        .work-title {
+            font-size: 1.5em;
+            margin-bottom: 0.5em;
+            color: #fff;
+        }
+        .work-description {
+            margin-bottom: 1.5em;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        .work-link {
+            display: inline-block;
+            padding: 0.8em 1.5em;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: background 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .work-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+        .tags {
+            margin-top: 1em;
+        }
+        .tag {
+            display: inline-block;
+            padding: 0.3em 0.8em;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            font-size: 0.8em;
+            margin-right: 0.5em;
+            margin-top: 0.5em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Tomoki's Creative Works</h1>
+        <p class="subtitle">Interactive Art & Digital Experiences</p>
+        
+        <div class="works">
+            <div class="work-item">
+                <h2 class="work-title">Sazanami (さざ波)</h2>
+                <p class="work-description">
+                    A generative art piece that visualizes the dynamics of dialogue and collective understanding through wave interference patterns. 
+                    Watch as individual voices create ripples that interact and reveal the contours of shared understanding.
+                </p>
+                <a href="./sazanami/" class="work-link">Experience Sazanami →</a>
+                <div class="tags">
+                    <span class="tag">Generative Art</span>
+                    <span class="tag">p5.js</span>
+                    <span class="tag">Wave Physics</span>
+                    <span class="tag">Interactive</span>
+                    <span class="tag">Dialogue Visualization</span>
+                </div>
+            </div>
+            
+            <div class="work-item">
+                <h2 class="work-title">Sample</h2>
+                <p class="work-description">
+                    A collection of experimental interactive elements and animations.
+                </p>
+                <a href="./sample/" class="work-link">View Sample →</a>
+                <div class="tags">
+                    <span class="tag">Experimental</span>
+                    <span class="tag">Animation</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
