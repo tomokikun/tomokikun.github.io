@@ -1,7 +1,7 @@
 let obstacles = [];
-let waveSpeed = 0.02;
+let waveSpeed = 0.008;
 let waveAmplitude = 30;
-let gridSize = 8;
+let gridSize = 10;
 let cols, rows;
 let waveField = [];
 let waveSources = [];
@@ -43,16 +43,20 @@ function createWaveSources() {
   // Position sources near screen corners with slight offset
   let margin = min(width, height) * 0.1; // Distance from exact corner
   let positions = [
-    { x: margin + random(-20, 20), y: margin + random(-20, 20) }, // Top-left
-    { x: width - margin + random(-20, 20), y: margin + random(-20, 20) }, // Top-right
-    { x: width - margin + random(-20, 20), y: height - margin + random(-20, 20) }, // Bottom-right
-    { x: margin + random(-20, 20), y: height - margin + random(-20, 20) } // Bottom-left
+    { x: margin, y: margin }, // Top-left
+    { x: width - margin, y: margin }, // Top-right
+    { x: width - margin, y: height - margin }, // Bottom-right
+    { x: margin, y: height - margin } // Bottom-left
   ];
   
   for (let i = 0; i < numSources; i++) {
     allWaveSources.push({
+      baseX: positions[i].x,
+      baseY: positions[i].y,
       x: positions[i].x,
       y: positions[i].y,
+      noiseOffsetX: random(1000),
+      noiseOffsetY: random(2000),
       hue: (i * 90 + random(-15, 15)) % 360, // Different colors for each corner
       frequency: random(0.008, 0.018),
       phase: random(TWO_PI),
@@ -185,6 +189,9 @@ function draw() {
   
   // Update obstacle positions with smooth noise-based animation
   updateObstacles();
+  
+  // Update wave source positions with smooth noise
+  updateWaveSourcePositions();
   
   // Auto-add wave sources over time
   if (autoAddSources && waveSources.length < allWaveSources.length) {
@@ -332,6 +339,20 @@ function draw() {
   text(controlText, 10, height - 10);
 }
 
+function updateWaveSourcePositions() {
+  for (let source of allWaveSources) {
+    // Smooth noise-based position variation
+    let noiseScale = 0.002;
+    let noiseX = noise(source.noiseOffsetX + frameCount * noiseScale);
+    let noiseY = noise(source.noiseOffsetY + frameCount * noiseScale);
+    
+    // Small smooth variations around base position
+    let variationAmount = 15;
+    source.x = source.baseX + (noiseX - 0.5) * variationAmount;
+    source.y = source.baseY + (noiseY - 0.5) * variationAmount;
+  }
+}
+
 function updateObstacles() {
   let centerX = width / 2;
   let centerY = height / 2;
@@ -401,9 +422,9 @@ function renderWaves() {
   strokeWeight(1);
   noFill();
   
-  // Render fewer lines by skipping every other grid point
-  for (let x = 0; x < cols - 1; x += 2) {
-    for (let y = 0; y < rows - 1; y += 2) {
+  // Render at higher resolution with shorter lines
+  for (let x = 0; x < cols - 1; x += 1) {
+    for (let y = 0; y < rows - 1; y += 1) {
       let worldX = x * gridSize;
       let worldY = y * gridSize;
       
@@ -411,15 +432,15 @@ function renderWaves() {
       let amplitude = waveData.amplitude * waveAmplitude;
       let intensity = abs(amplitude) / waveAmplitude;
       
-      if (intensity > 0.1) {
+      if (intensity > 0.08) {
         // Use the mixed color from wave sources
         let brightness = 60 + intensity * 40;
         let saturation = 40 + intensity * 30;
         stroke(waveData.hue, saturation, brightness, intensity * 0.7);
         
-        // Draw single wave line per grid point
+        // Draw shorter wave line per grid point
         line(worldX, worldY + amplitude, 
-             worldX + gridSize * 2, worldY + amplitude);
+             worldX + gridSize, worldY + amplitude);
       }
       
       // Fewer high-intensity points with source-based colors
