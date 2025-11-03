@@ -23,6 +23,25 @@ let frequencyDriftRate = 0.001; // How fast frequencies drift
 let harmonyThreshold = 0.7; // Threshold for considering sources "in harmony"
 let discordEvents = []; // Track discord events for dynamic source changes
 
+// Audio system
+let audioContext;
+let masterGain;
+let enableAudio = false;
+let baseAudioFrequency = 220; // A3 note as base frequency
+let audioInitialized = false;
+
+// Central shape and wave analysis
+let centralCircularity = 1.0; // 0 to 1, where 1 is perfect circle
+let centralWaveIntensity = 0.0; // Average wave intensity in center area
+let centerAnalysisRadius; // Will be set in setup()
+let lastShapeAnalysis = 0;
+let shapeAnalysisInterval = 200; // Analyze every 200ms
+
+// Additional audio nodes for central shape effects
+let centralFilter; // Low-pass filter controlled by circularity
+let centralReverb; // Reverb controlled by wave intensity
+let centralConvolver;
+
 function setup() {
   createCanvas(windowWidth, windowHeight);
   colorMode(HSB, 360, 100, 100);
@@ -48,6 +67,9 @@ function setup() {
 
   // Create invisible obstacles
   createObstacles();
+
+  // Set center analysis radius
+  centerAnalysisRadius = min(width, height) * 0.25;
 }
 
 function createWaveSources() {
@@ -81,6 +103,10 @@ function createWaveSources() {
       id: i,
       harmonicTendency: random(-1, 1), // Tendency towards harmony or discord
       lastFrequencyChange: 0,
+      // Audio properties
+      oscillator: null,
+      gainNode: null,
+      audioFrequency: baseAudioFrequency * pow(2, i * 0.25), // Musical intervals
     });
   }
 
@@ -218,6 +244,17 @@ function draw() {
 
   // Update harmony/discord system
   updateHarmonySystem();
+
+  // Analyze central shape and waves
+  if (millis() - lastShapeAnalysis > shapeAnalysisInterval) {
+    analyzeCentralShape();
+    analyzeCentralWaves();
+    lastShapeAnalysis = millis();
+  }
+
+  // Update audio system
+  updateAudioForSources();
+  updateCentralAudioEffects();
 
   // Auto-add wave sources over time
   if (autoAddSources && waveSources.length < allWaveSources.length) {
@@ -359,6 +396,11 @@ function draw() {
   // Draw harmony meter
   // drawHarmonyMeter();
 
+  // Draw central analysis display
+  if (enableAudio) {
+    // drawCentralAnalysis();
+  }
+
   // Show controls and status at bottom of screen
   fill(0, 0, 100, 0.7);
   textAlign(LEFT, BOTTOM);
@@ -369,7 +411,9 @@ function draw() {
     " | [M] Mouse Source: " +
     (enableMouseSource ? "ON" : "OFF") +
     " | [Q] Shape: " +
-    obstacleShape.toUpperCase();
+    obstacleShape.toUpperCase() +
+    " | [SPACE] Audio: " +
+    (enableAudio ? "ON" : "OFF");
 
   if (autoAddSources) {
     controlText +=
@@ -381,6 +425,314 @@ function draw() {
   }
 
   text(controlText, 10, height - 10);
+}
+
+function initializeAudio() {
+  if (audioInitialized) return;
+
+  try {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+    // Create audio effect chain: sources -> filter -> reverb -> master -> destination
+    centralFilter = audioContext.createBiquadFilter();
+    centralFilter.type = "lowpass";
+    centralFilter.frequency.setValueAtTime(2000, audioContext.currentTime);
+    centralFilter.Q.setValueAtTime(1, audioContext.currentTime);
+
+    // Create simple reverb using delay and feedback
+    centralReverb = audioContext.createGain();
+    let delay = audioContext.createDelay(2.0);
+    let feedback = audioContext.createGain();
+    let wetGain = audioContext.createGain();
+
+    delay.delayTime.setValueAtTime(0.3, audioContext.currentTime);
+    feedback.gain.setValueAtTime(0.3, audioContext.currentTime);
+    wetGain.gain.setValueAtTime(0.2, audioContext.currentTime);
+
+    // Connect reverb chain
+    centralReverb.connect(delay);
+    delay.connect(feedback);
+    feedback.connect(delay);
+    delay.connect(wetGain);
+
+    // Connect main chain
+    centralFilter.connect(centralReverb);
+    centralFilter.connect(wetGain); // Dry signal
+
+    masterGain = audioContext.createGain();
+    wetGain.connect(masterGain);
+    masterGain.connect(audioContext.destination);
+    masterGain.gain.setValueAtTime(0.5, audioContext.currentTime); // Low master volume
+
+    audioInitialized = true;
+    console.log("Audio initialized with central effects");
+  } catch (error) {
+    console.error("Audio initialization failed:", error);
+  }
+}
+
+function createAudioOscillator(source) {
+  if (!audioInitialized || !audioContext) return;
+
+  try {
+    // Create oscillator and gain node
+    source.oscillator = audioContext.createOscillator();
+    source.gainNode = audioContext.createGain();
+
+    // Set initial properties
+    source.oscillator.type = "sine";
+    source.oscillator.frequency.setValueAtTime(
+      source.audioFrequency,
+      audioContext.currentTime
+    );
+
+    // Set initial gain (volume) based on intensity
+    let initialGain = source.intensity * 0.05; // Very quiet
+    source.gainNode.gain.setValueAtTime(initialGain, audioContext.currentTime);
+
+    // Connect oscillator -> gain -> central filter -> effects chain
+    source.oscillator.connect(source.gainNode);
+    source.gainNode.connect(centralFilter);
+
+    // Start the oscillator
+    source.oscillator.start();
+
+    console.log(`Audio oscillator created for source ${source.id}`);
+  } catch (error) {
+    console.error(
+      `Failed to create oscillator for source ${source.id}:`,
+      error
+    );
+  }
+}
+
+function stopAudioOscillator(source) {
+  if (source.oscillator) {
+    try {
+      source.oscillator.stop();
+      source.oscillator.disconnect();
+      source.gainNode.disconnect();
+    } catch (error) {
+      console.error(
+        `Error stopping oscillator for source ${source.id}:`,
+        error
+      );
+    }
+    source.oscillator = null;
+    source.gainNode = null;
+  }
+}
+
+function updateAudioForSources() {
+  if (!enableAudio || !audioInitialized) return;
+
+  // Update audio for active sources
+  for (let source of waveSources) {
+    if (!source.oscillator) {
+      createAudioOscillator(source);
+    } else {
+      // Update frequency based on visual frequency (scaled to audio range)
+      let audioFreq =
+        source.audioFrequency *
+        (1 + (source.frequency - source.baseFrequency) * 100);
+      audioFreq = constrain(audioFreq, 80, 2000); // Keep in reasonable audio range
+
+      try {
+        source.oscillator.frequency.setValueAtTime(
+          audioFreq,
+          audioContext.currentTime
+        );
+
+        // Update volume based on harmony state and intensity
+        let harmonyVolumeMultiplier = 1.0;
+        if (harmonyState > harmonyThreshold) {
+          harmonyVolumeMultiplier = 1.5; // Louder when in harmony
+        } else if (harmonyState < -harmonyThreshold) {
+          harmonyVolumeMultiplier = 0.3; // Quieter when in discord
+        }
+
+        let targetGain = source.intensity * 0.05 * harmonyVolumeMultiplier;
+        source.gainNode.gain.linearRampToValueAtTime(
+          targetGain,
+          audioContext.currentTime + 0.1
+        );
+      } catch (error) {
+        console.error(`Error updating audio for source ${source.id}:`, error);
+      }
+    }
+  }
+
+  // Stop audio for inactive sources
+  for (let source of allWaveSources) {
+    if (!waveSources.includes(source) && source.oscillator) {
+      stopAudioOscillator(source);
+    }
+  }
+}
+
+function toggleAudio() {
+  if (!audioInitialized) {
+    initializeAudio();
+  }
+
+  enableAudio = !enableAudio;
+
+  if (enableAudio) {
+    // Resume audio context if needed
+    if (audioContext && audioContext.state === "suspended") {
+      audioContext.resume();
+    }
+    updateAudioForSources();
+  } else {
+    // Stop all audio
+    for (let source of allWaveSources) {
+      stopAudioOscillator(source);
+    }
+  }
+}
+
+function updateCentralAudioEffects() {
+  if (!enableAudio || !audioInitialized || !centralFilter) return;
+
+  try {
+    // Control filter frequency based on circularity
+    // More circular = higher frequency (brighter sound)
+    // Less circular = lower frequency (darker, muffled sound)
+    let targetFilterFreq = 500 + centralCircularity * 1500; // 500Hz to 2000Hz
+    centralFilter.frequency.linearRampToValueAtTime(
+      targetFilterFreq,
+      audioContext.currentTime + 0.5
+    );
+
+    // Control filter Q (resonance) based on wave intensity
+    // Higher wave intensity = higher Q (more resonant)
+    let targetQ = 0.5 + centralWaveIntensity * 10; // 0.5 to 10.5
+    centralFilter.Q.linearRampToValueAtTime(
+      targetQ,
+      audioContext.currentTime + 0.5
+    );
+
+    // Control reverb amount based on both factors
+    // More circular + high wave intensity = more reverb (spacious, harmonious)
+    // Less circular + low wave intensity = less reverb (dry, fragmented)
+    let reverbAmount = centralCircularity * 0.7 + centralWaveIntensity * 0.3;
+    if (centralReverb) {
+      centralReverb.gain.linearRampToValueAtTime(
+        reverbAmount * 0.4,
+        audioContext.currentTime + 0.5
+      );
+    }
+  } catch (error) {
+    console.error("Error updating central audio effects:", error);
+  }
+}
+
+function analyzeCentralShape() {
+  if (obstacles.length === 0) {
+    centralCircularity = 1.0;
+    return;
+  }
+
+  let centerX = width / 2;
+  let centerY = height / 2;
+
+  // Calculate average distance from center and variance
+  let distances = [];
+  let totalDistance = 0;
+
+  for (let obstacle of obstacles) {
+    let distance = sqrt(
+      (obstacle.x - centerX) ** 2 + (obstacle.y - centerY) ** 2
+    );
+    distances.push(distance);
+    totalDistance += distance;
+  }
+
+  if (distances.length === 0) {
+    centralCircularity = 1.0;
+    return;
+  }
+
+  let avgDistance = totalDistance / distances.length;
+
+  // Calculate variance from average distance
+  let variance = 0;
+  for (let distance of distances) {
+    variance += (distance - avgDistance) ** 2;
+  }
+  variance /= distances.length;
+
+  // Convert variance to circularity (0 = irregular, 1 = perfect circle)
+  // Lower variance = higher circularity
+
+  // Standard deviation as a percentage of average distance
+  let standardDeviation = sqrt(variance);
+  let coefficientOfVariation = standardDeviation / avgDistance;
+
+  // More reasonable normalization: perfect circle has CV ≈ 0, very irregular shape has CV > 0.3
+  let normalizedVariance = constrain(coefficientOfVariation / 0.3, 0, 1);
+  centralCircularity = 1 - normalizedVariance;
+
+  // Debug logging (remove later)
+  if (frameCount % 300 === 0) {
+    // Log every 5 seconds at 60fps
+    console.log(`Circularity Analysis:
+      Avg Distance: ${avgDistance.toFixed(2)}
+      Variance: ${variance.toFixed(2)}
+      Std Dev: ${standardDeviation.toFixed(2)}
+      CV: ${coefficientOfVariation.toFixed(3)}
+      Circularity: ${centralCircularity.toFixed(3)}`);
+  }
+}
+
+function analyzeCentralWaves() {
+  let centerX = width / 2;
+  let centerY = height / 2;
+  let centerGridX = Math.floor(centerX / gridSize);
+  let centerGridY = Math.floor(centerY / gridSize);
+
+  let totalIntensity = 0;
+  let sampleCount = 0;
+  let analysisRadiusGrid = Math.floor(centerAnalysisRadius / gridSize);
+
+  // Sample wave intensity in circular area around center
+  for (
+    let x = centerGridX - analysisRadiusGrid;
+    x <= centerGridX + analysisRadiusGrid;
+    x++
+  ) {
+    for (
+      let y = centerGridY - analysisRadiusGrid;
+      y <= centerGridY + analysisRadiusGrid;
+      y++
+    ) {
+      if (x >= 0 && x < cols && y >= 0 && y < rows) {
+        let gridCenterX = x * gridSize;
+        let gridCenterY = y * gridSize;
+        let distanceFromCenter = sqrt(
+          (gridCenterX - centerX) ** 2 + (gridCenterY - centerY) ** 2
+        );
+
+        if (distanceFromCenter <= centerAnalysisRadius) {
+          let amplitude = waveField[x][y].amplitude;
+          totalIntensity += abs(amplitude);
+          sampleCount++;
+        }
+      }
+    }
+  }
+
+  if (sampleCount > 0) {
+    centralWaveIntensity = totalIntensity / sampleCount;
+    // Normalize to 0-1 range
+    centralWaveIntensity = constrain(
+      centralWaveIntensity / waveAmplitude,
+      0,
+      1
+    );
+  } else {
+    centralWaveIntensity = 0;
+  }
 }
 
 function updateWaveSourcePositions() {
@@ -611,7 +963,14 @@ function updateObstacles() {
       let noiseOffset = 1000;
 
       // Modify noise intensity based on harmony state
-      let noiseIntensity = harmonyState > 0 ? 0.15 : 0.5; // More chaotic during discord
+      let noiseIntensity;
+      if (harmonyState > harmonyThreshold) {
+        noiseIntensity = 0.05; // Very stable when harmonious
+      } else if (harmonyState < -harmonyThreshold) {
+        noiseIntensity = 0.8; // Very chaotic when discordant
+      } else {
+        noiseIntensity = 0.3; // Moderate variation in neutral state
+      }
 
       let radiusNoise = noise(
         cos(obstacle.angle) * noiseScale + noiseOffset,
@@ -659,7 +1018,14 @@ function updateObstacles() {
       );
 
       // Apply distortion - more chaotic during discord
-      let distortionIntensity = harmonyState > 0 ? 10 : 30;
+      let distortionIntensity;
+      if (harmonyState > harmonyThreshold) {
+        distortionIntensity = 5; // Very stable when harmonious
+      } else if (harmonyState < -harmonyThreshold) {
+        distortionIntensity = 50; // Very chaotic when discordant
+      } else {
+        distortionIntensity = 20; // Moderate distortion in neutral state
+      }
       let distortion = (distortionNoise - 0.5) * distortionIntensity;
       let distance = sqrt(
         (x - centerX) * (x - centerX) + (y - centerY) * (y - centerY)
@@ -692,8 +1058,11 @@ function renderWaves() {
         let brightness = 60 + intensity * 40;
         let saturation = 40 + intensity * 30;
         stroke(waveData.hue, saturation, brightness, intensity * 0.7);
+        strokeWeight(intensity * amplitude * 2);
+        circle(worldX, worldY + amplitude, intensity * 1.5);
 
         // Draw shorter wave line per grid point
+        strokeWeight(intensity);
         line(worldX, worldY + amplitude, worldX + gridSize, worldY + amplitude);
       }
 
@@ -875,6 +1244,80 @@ function drawHarmonyMeter() {
   }
 }
 
+function drawCentralAnalysis() {
+  // Position display in top-left corner
+  let displayX = 20;
+  let displayY = 30;
+  let displayWidth = 200;
+  let displayHeight = 120;
+
+  // Background
+  fill(0, 0, 0, 0.8);
+  noStroke();
+  rect(displayX - 10, displayY - 10, displayWidth + 20, displayHeight + 20, 5);
+
+  // Title
+  fill(0, 0, 100, 0.9);
+  textAlign(LEFT, TOP);
+  textSize(14);
+  text("Central Shape Analysis", displayX, displayY);
+
+  // Circularity meter
+  let meterY = displayY + 25;
+  textSize(12);
+  text(
+    "Circularity: " + (centralCircularity * 100).toFixed(2) + "%",
+    displayX,
+    meterY
+  );
+
+  // Circularity bar
+  let barY = meterY + 15;
+  let barWidth = 150;
+  let barHeight = 10;
+
+  fill(0, 0, 30);
+  rect(displayX, barY, barWidth, barHeight, 3);
+
+  let circularityHue = centralCircularity * 120; // Red to green
+  fill(circularityHue, 80, 80);
+  rect(displayX, barY, centralCircularity * barWidth, barHeight, 3);
+
+  // Wave intensity meter
+  let intensityY = barY + 25;
+  text(
+    "Wave Intensity: " + (centralWaveIntensity * 100).toFixed(1) + "%",
+    displayX,
+    intensityY
+  );
+
+  // Wave intensity bar
+  let waveBarY = intensityY + 15;
+  fill(0, 0, 30);
+  rect(displayX, waveBarY, barWidth, barHeight, 3);
+
+  let intensityHue = 200 + centralWaveIntensity * 160; // Blue to magenta
+  fill(intensityHue, 70, 70);
+  rect(displayX, waveBarY, centralWaveIntensity * barWidth, barHeight, 3);
+
+  // Audio effect info
+  if (centralFilter) {
+    let effectY = waveBarY + 25;
+    textSize(10);
+    fill(0, 0, 80, 0.8);
+    let filterFreq = (500 + centralCircularity * 1500).toFixed(0);
+    let reverbAmt = (
+      centralCircularity * 0.7 +
+      centralWaveIntensity * 0.3 * 100
+    ).toFixed(1);
+    text(
+      "Filter: " + filterFreq + "Hz | Reverb: " + reverbAmt + "%",
+      displayX,
+      effectY
+    );
+  }
+}
+
 function showObstacles() {
   noFill();
   strokeWeight(2);
@@ -923,6 +1366,9 @@ function keyPressed() {
   } else if (key === "q" || key === "Q") {
     obstacleShape = obstacleShape === "circle" ? "square" : "circle";
     createObstacles();
+  } else if (key === " ") {
+    // Spacebar toggles audio
+    toggleAudio();
   }
 }
 
