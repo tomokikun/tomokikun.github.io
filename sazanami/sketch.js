@@ -1059,10 +1059,10 @@ function renderWaves() {
         let saturation = 40 + intensity * 30;
         stroke(waveData.hue, saturation, brightness, intensity * 0.7);
         strokeWeight(intensity * amplitude * 2);
-        circle(worldX, worldY + amplitude, intensity * 1.5);
+        // circle(worldX, worldY + amplitude, intensity * 1.5);
 
         // Draw shorter wave line per grid point
-        strokeWeight(intensity);
+        // strokeWeight(intensity);
         line(worldX, worldY + amplitude, worldX + gridSize, worldY + amplitude);
       }
 
@@ -1070,7 +1070,7 @@ function renderWaves() {
       if (intensity > 0.7) {
         fill(waveData.hue, 20, brightness + 30, intensity * 0.6);
         noStroke();
-        circle(worldX, worldY + amplitude, intensity * 2);
+        // circle(worldX, worldY + amplitude, intensity * 2);
         noFill();
       }
     }
