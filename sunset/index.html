@@ -1,263 +1,282 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sunset - Animated SVG Art</title>
-    <style>
-        body {
-            font-family: 'Georgia', serif;
-            margin: 0;
-            padding: 40px;
-            background: #fafafa;
-            color: #333;
-            line-height: 1.6;
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 700px;
-            margin: 0 auto;
-        }
-
-        .mobile-notice {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            padding: 1em;
-            margin-top: 4em;
-            margin-bottom: 2em;
-            color: #856404;
-            display: none;
-        }
-
-        .mobile-notice.show {
-            display: block;
-        }
-
-        .artwork {
-            background: white;
-            border: 1px solid #e0e0e0;
-            padding: 2em;
-            margin-bottom: 2em;
-            text-align: center;
-        }
-
-        .svg-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 450px;
-        }
-
-        .svg-container object, 
-        .svg-container img {
-            max-width: 100%;
-            height: auto;
-        }
-
-        h1 {
-            font-size: 2.2em;
-            margin-bottom: 0.3em;
-            text-align: center;
-            font-weight: normal;
-            color: #222;
-        }
-
-        .description {
-            font-size: 1em;
-            line-height: 1.7;
-            margin: 1.5em 0;
-            color: #555;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .controls {
-            margin-top: 2em;
-            text-align: center;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 0.7em 1.2em;
-            margin: 0.5em;
-            background: #333;
-            color: white;
-            text-decoration: none;
-            transition: background 0.2s ease;
-            font-size: 0.9em;
-        }
-
-        .btn:hover {
-            background: #555;
-        }
-
-        .back-link {
-            position: fixed;
-            top: 2em;
-            left: 2em;
-            background: #333;
-            color: white;
-            text-decoration: none;
-            padding: 0.7em 1em;
-            transition: background 0.2s ease;
-            z-index: 10;
-        }
-
-        .back-link:hover {
-            background: #555;
-        }
-
-        @media (max-width: 768px) {
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Sunset - Animated SVG Art</title>
+        <style>
             body {
-                padding: 20px;
-                padding-top: 10px;
+                font-family: "Georgia", serif;
+                margin: 0;
+                padding: 40px;
+                background: #fafafa;
+                color: #333;
+                line-height: 1.6;
+                min-height: 100vh;
             }
-            
+
             .container {
-                max-width: none;
+                max-width: 700px;
+                margin: 0 auto;
             }
-            
+
             .mobile-notice {
-                margin-top: 3.5em;
-                margin-left: 0.5em;
-                margin-right: 0.5em;
-                padding: 0.8em;
-                font-size: 0.9em;
+                background: #fff3cd;
+                border: 1px solid #ffeaa7;
+                padding: 1em;
+                margin-top: 4em;
+                margin-bottom: 2em;
+                color: #856404;
+                display: none;
             }
-            
-            .artwork {
-                padding: 1.5em;
-            }
-            
-            .svg-container {
-                min-height: 300px;
-            }
-            
-            h1 {
-                font-size: 1.8em;
-            }
-            
-            .description {
-                font-size: 0.95em;
-            }
-            
-            .btn {
+
+            .mobile-notice.show {
                 display: block;
-                margin: 0.5em auto;
-                max-width: 200px;
+            }
+
+            .artwork {
+                background: white;
+                border: 1px solid #e0e0e0;
+                padding: 2em;
+                margin-bottom: 2em;
                 text-align: center;
             }
-            
-            .back-link {
-                top: 1em;
-                left: 1em;
-                padding: 0.6em 0.8em;
-                font-size: 0.9em;
-            }
-        }
 
-        @media (max-width: 480px) {
-            body {
-                padding: 15px;
-                padding-top: 5px;
-            }
-            
-            .mobile-notice {
-                margin-top: 3em;
-                margin-left: 0.25em;
-                margin-right: 0.25em;
-                padding: 0.7em;
-                font-size: 0.85em;
-                line-height: 1.4;
-            }
-            
-            .artwork {
-                padding: 1em;
-            }
-            
             .svg-container {
-                min-height: 250px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 450px;
             }
-            
+
+            .svg-container object,
+            .svg-container img {
+                max-width: 100%;
+                height: auto;
+            }
+
             h1 {
-                font-size: 1.5em;
+                font-size: 2.2em;
+                margin-bottom: 0.3em;
+                text-align: center;
+                font-weight: normal;
+                color: #222;
             }
-            
+
             .description {
-                font-size: 0.9em;
-                line-height: 1.6;
+                font-size: 1em;
+                line-height: 1.7;
+                margin: 1.5em 0;
+                color: #555;
+                max-width: 600px;
+                margin-left: auto;
+                margin-right: auto;
             }
-            
+
+            .controls {
+                margin-top: 2em;
+                text-align: center;
+            }
+
             .btn {
-                font-size: 0.85em;
-                padding: 0.6em 1em;
+                display: inline-block;
+                padding: 0.7em 1.2em;
+                margin: 0.5em;
+                background: #333;
+                color: white;
+                text-decoration: none;
+                transition: background 0.2s ease;
+                font-size: 0.9em;
             }
-            
+
+            .btn:hover {
+                background: #555;
+            }
+
             .back-link {
-                font-size: 0.85em;
-                padding: 0.5em 0.7em;
+                position: fixed;
+                top: 2em;
+                left: 2em;
+                background: #333;
+                color: white;
+                text-decoration: none;
+                padding: 0.7em 1em;
+                transition: background 0.2s ease;
+                z-index: 10;
             }
-        }
-    </style>
-</head>
-<body>
-    <a href="../" class="back-link">← Back to Gallery</a>
-    
-    <div class="container">
-        <div class="mobile-notice" id="mobileNotice">
-            <strong>Note for mobile users:</strong> This artwork uses advanced SVG filters that may not display properly on some mobile devices. For the best experience, please view on a desktop or laptop computer.
-        </div>
-        
-        <div class="artwork">
-            <div class="svg-container">
-                <object data="sunset.svg" type="image/svg+xml" style="width: 450px; height: 450px;">
-                    <img src="sunset.svg" alt="Sunset Animation" />
-                </object>
+
+            .back-link:hover {
+                background: #555;
+            }
+
+            @media (max-width: 768px) {
+                body {
+                    padding: 20px;
+                    padding-top: 10px;
+                }
+
+                .container {
+                    max-width: none;
+                }
+
+                .mobile-notice {
+                    margin-top: 3.5em;
+                    margin-left: 0.5em;
+                    margin-right: 0.5em;
+                    padding: 0.8em;
+                    font-size: 0.9em;
+                }
+
+                .artwork {
+                    padding: 1.5em;
+                }
+
+                .svg-container {
+                    min-height: 300px;
+                }
+
+                h1 {
+                    font-size: 1.8em;
+                }
+
+                .description {
+                    font-size: 0.95em;
+                }
+
+                .btn {
+                    display: block;
+                    margin: 0.5em auto;
+                    max-width: 200px;
+                    text-align: center;
+                }
+
+                .back-link {
+                    top: 1em;
+                    left: 1em;
+                    padding: 0.6em 0.8em;
+                    font-size: 0.9em;
+                }
+            }
+
+            @media (max-width: 480px) {
+                body {
+                    padding: 15px;
+                    padding-top: 5px;
+                }
+
+                .mobile-notice {
+                    margin-top: 3em;
+                    margin-left: 0.25em;
+                    margin-right: 0.25em;
+                    padding: 0.7em;
+                    font-size: 0.85em;
+                    line-height: 1.4;
+                }
+
+                .artwork {
+                    padding: 1em;
+                }
+
+                .svg-container {
+                    min-height: 250px;
+                }
+
+                h1 {
+                    font-size: 1.5em;
+                }
+
+                .description {
+                    font-size: 0.9em;
+                    line-height: 1.6;
+                }
+
+                .btn {
+                    font-size: 0.85em;
+                    padding: 0.6em 1em;
+                }
+
+                .back-link {
+                    font-size: 0.85em;
+                    padding: 0.5em 0.7em;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <a href="../" class="back-link">← Back to Gallery</a>
+
+        <div class="container">
+            <div class="mobile-notice" id="mobileNotice">
+                <strong>Note for mobile users:</strong> This artwork uses
+                advanced SVG filters that may not display properly on some
+                mobile devices. For the best experience, please view on a
+                desktop or laptop computer.
+            </div>
+
+            <div class="artwork">
+                <div class="svg-container">
+                    <object
+                        data="sunset.svg"
+                        type="image/svg+xml"
+                        style="width: 450px; height: 450px"
+                    >
+                        <img src="sunset.svg" alt="Sunset Animation" />
+                    </object>
+                </div>
+            </div>
+
+            <h1>Sunset</h1>
+            <p class="description">
+                This artwork originates from a profound experience with the
+                nature of perception and change. The sunset's transformation is
+                so gradual that it remains invisible to focused attention - the
+                extremely slow change of sky color and cloud forms go
+                unrecognized. But the moment we look away and return, the change
+                becomes suddenly, dramatically apparent.
+            </p>
+            <p class="description">
+                This SVG animation captures that moment of recognition - the
+                moving emotional impact of suddenly perceiving what was always
+                happening but remained hidden from direct observation.
+            </p>
+
+            <div class="controls">
+                <a href="README.md" target="_blank" class="btn"
+                    >Read Full Concept</a
+                >
+                <a href="sunset.svg" target="_blank" class="btn"
+                    >View SVG Source</a
+                >
+                <a href="sunset.svg" download="sunset.svg" class="btn"
+                    >Download SVG</a
+                >
             </div>
         </div>
-        
-        <h1>Sunset</h1>
-        <p class="description">
-            This artwork originates from a profound experience with the nature of perception and change. 
-            The sunset's transformation is so gradual that it remains invisible to focused attention - 
-            the extremely slow change of sky color and cloud forms go unrecognized. But the moment we look away 
-            and return, the change becomes suddenly, dramatically apparent.
-        </p>
-        <p class="description">
-            This SVG animation captures that moment of recognition - the moving emotional 
-            impact of suddenly perceiving what was always happening but remained hidden from direct observation.
-        </p>
-        
-        <div class="controls">
-            <a href="README.md" target="_blank" class="btn">Read Full Concept</a>
-            <a href="sunset.svg" target="_blank" class="btn">View SVG Source</a>
-            <a href="sunset.svg" download="sunset.svg" class="btn">Download SVG</a>
-        </div>
-    </div>
 
-    <script>
-        // Device detection for mobile notice
-        function isMobileDevice() {
-            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
-                   window.innerWidth <= 768;
-        }
-
-        // Show mobile notice if on mobile device
-        if (isMobileDevice()) {
-            document.getElementById('mobileNotice').classList.add('show');
-        }
-
-        // Update on window resize
-        window.addEventListener('resize', function() {
-            const notice = document.getElementById('mobileNotice');
-            if (isMobileDevice()) {
-                notice.classList.add('show');
-            } else {
-                notice.classList.remove('show');
+        <script>
+            // Device detection for mobile notice
+            function isMobileDevice() {
+                return (
+                    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+                        navigator.userAgent,
+                    ) || window.innerWidth <= 768
+                );
             }
-        });
-    </script>
-</body>
+
+            // Show mobile notice if on mobile device
+            if (isMobileDevice()) {
+                document.getElementById("mobileNotice").classList.add("show");
+            }
+
+            // Update on window resize
+            window.addEventListener("resize", function () {
+                const notice = document.getElementById("mobileNotice");
+                if (isMobileDevice()) {
+                    notice.classList.add("show");
+                } else {
+                    notice.classList.remove("show");
+                }
+            });
+        </script>
+    </body>
 </html>
