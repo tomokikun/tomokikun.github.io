@@ -1,5 +1,0 @@
-{
-  "buildCommand": "npm run build && cp src/index.html dist/",
-  "outputDirectory": "dist",
-  "installCommand": "npm install --legacy-peer-deps"
-}
