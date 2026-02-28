@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Farmer's Time</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background: #000;
+      }
+
+      .back-link {
+        position: fixed;
+        top: 2em;
+        left: 2em;
+        background: rgba(255, 255, 255, 0.9);
+        color: #333;
+        text-decoration: none;
+        padding: 0.7em 1em;
+        font-family: "Georgia", serif;
+        font-size: 0.9em;
+        transition: background 0.2s ease;
+        z-index: 1000;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+      }
+
+      .back-link:hover {
+        background: white;
+        color: #000;
+      }
+
+      @media (max-width: 768px) {
+        .back-link {
+          top: 1em;
+          left: 1em;
+          padding: 0.6em 0.8em;
+          font-size: 0.85em;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- <a href="../" class="back-link">Back to Gallery</a> -->
+    <script src="sketch.js"></script>
+  </body>
+</html>
