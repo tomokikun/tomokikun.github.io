@@ -1,8 +1,43 @@
 // ── Farmer's time ─────────────────────────────────
 
+class Background {
+  constructor() {
+    this.img = null;
+    this.alpha = 0;
+    this.done = false;
+  }
+
+  load(w, h) {
+    loadImage(
+      `https://picsum.photos/${w}/${h}.webp?random&grayscale&blur=2`,
+      (img) => {
+        this.img = img;
+      },
+      () => {
+        this.img = null;
+      },
+    );
+  }
+
+  draw() {
+    if (!this.img || this.done) return;
+
+    this.alpha = lerp(this.alpha, 100, 0.0002);
+    tint(0, 0, 100, this.alpha);
+    let s = max(width / this.img.width, height / this.img.height);
+    let w = this.img.width * s;
+    let h = this.img.height * s;
+    image(this.img, (width - w) / 2, (height - h) / 2, w, h);
+    noTint();
+
+    if (this.alpha >= 99) {
+      this.done = true;
+    }
+  }
+}
+
 let t = 0;
-let bg;
-let bgAlpha = 0;
+let background;
 
 let params = {
   baseRadius: 200,
@@ -10,25 +45,26 @@ let params = {
   distortion: 0.15,
   speed: 0.0004,
   vertices: 100,
-  layers: 80,
+  layers: 40,
 };
 
 function setup() {
+  pixelDensity(1);
   createCanvas(windowWidth, windowHeight);
   colorMode(HSB, 360, 100, 100, 100);
   noStroke();
+  frameRate(30);
 
   params.baseRadius = min(width, height) * 0.25;
 
-  loadImage(
-    `https://picsum.photos/${windowWidth}/${windowHeight}.webp?random&grayscale&blur=2`,
-    (img) => {
-      bg = img;
-    },
-    () => {
-      bg = null;
-    },
-  );
+  // Reduce vertices on mobile
+  let isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if (isMobile) {
+    params.vertices = 60;
+  }
+
+  background = new Background();
+  background.load(windowWidth, windowHeight);
 }
 
 function windowResized() {
@@ -40,16 +76,7 @@ function draw() {
   let cx = width / 2;
   let cy = height / 2;
 
-  // Background (cover fit)
-  if (bg) {
-    bgAlpha = lerp(bgAlpha, 100, 0.0002);
-    tint(0, 0, 100, bgAlpha);
-    let s = max(width / bg.width, height / bg.height);
-    let w = bg.width * s;
-    let h = bg.height * s;
-    image(bg, (width - w) / 2, (height - h) / 2, w, h);
-    noTint();
-  }
+  background.draw();
 
   // Layers (draw outer to inner)
   let n = int(params.layers);
@@ -66,6 +93,15 @@ function draw() {
 
   t += params.speed;
 }
+
+// Pause rendering when tab is hidden
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    noLoop();
+  } else {
+    loop();
+  }
+});
 
 function drawDrop(cx, cy, layer, totalLayers) {
   let layerFraction = layer / totalLayers;
