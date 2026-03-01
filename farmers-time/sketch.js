@@ -1,6 +1,8 @@
 // ── Farmer's time ─────────────────────────────────
 
 let t = 0;
+let bg;
+let bgAlpha = 0;
 
 let params = {
   baseRadius: 200,
@@ -17,6 +19,16 @@ function setup() {
   noStroke();
 
   params.baseRadius = min(width, height) * 0.25;
+
+  loadImage(
+    `https://picsum.photos/${windowWidth}/${windowHeight}.webp?random&grayscale&blur=2`,
+    (img) => {
+      bg = img;
+    },
+    () => {
+      bg = null;
+    },
+  );
 }
 
 function windowResized() {
@@ -28,8 +40,16 @@ function draw() {
   let cx = width / 2;
   let cy = height / 2;
 
-  // Background
-  background(0);
+  // Background (cover fit)
+  if (bg) {
+    bgAlpha = lerp(bgAlpha, 100, 0.0002);
+    tint(0, 0, 100, bgAlpha);
+    let s = max(width / bg.width, height / bg.height);
+    let w = bg.width * s;
+    let h = bg.height * s;
+    image(bg, (width - w) / 2, (height - h) / 2, w, h);
+    noTint();
+  }
 
   // Layers (draw outer to inner)
   let n = int(params.layers);
@@ -41,7 +61,7 @@ function draw() {
   ellipse(
     cx + 10 * cos(t * 10 * noise(t / 100)),
     cy + 10 * sin(t * 10 * noise(t / 20)),
-    1 + 1 * noise(-t / 10)
+    1 + 1 * noise(-t / 10),
   );
 
   t += params.speed;
@@ -77,23 +97,15 @@ function drawDrop(cx, cy, layer, totalLayers) {
     let ny = sin(angle + angleOffset) * ns * 100;
 
     // Composite of 3 octaves of noise (coarse deformation + medium + fine trembling)
-    let n1 = noise(
-      nx + t + timeOffset,
-      ny + t + timeOffset
-    );
+    let n1 = noise(nx + t + timeOffset, ny + t + timeOffset);
     let n2 = noise(
       nx * 2.1 - t * 1.3 + timeOffset,
-      ny * 2.1 + t + timeOffset + 50
+      ny * 2.1 + t + timeOffset + 50,
     );
-    let n3 = noise(
-      nx * 0.5 + t * 0.4,
-      ny * 0.5 - t * 0.6 + layer * 10
-    );
+    let n3 = noise(nx * 0.5 + t * 0.4, ny * 0.5 - t * 0.6 + layer * 10);
 
     let d =
-      r +
-      distAmt *
-        ((n1 - 0.5) * 1.2 + (n2 - 0.5) * 0.5 + (n3 - 0.5) * 0.3);
+      r + distAmt * ((n1 - 0.5) * 1.2 + (n2 - 0.5) * 0.5 + (n3 - 0.5) * 0.3);
 
     // Subtle teardrop bias
     let teardrop = 1.0 + 0.1 * sin(angle + PI + 10 * noise(t / 10));
