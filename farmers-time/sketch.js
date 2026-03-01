@@ -115,7 +115,6 @@ let params = {
 };
 
 function setup() {
-  pixelDensity(1);
   createCanvas(windowWidth, windowHeight);
   colorMode(HSB, 360, 100, 100, 100);
   noStroke();
