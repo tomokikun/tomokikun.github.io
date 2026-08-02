@@ -1,0 +1,10 @@
+{
+  "client_id": "https://tomokikun.github.io/flick/oauth/client.json",
+  "client_name": "flick",
+  "client_uri": "https://tomokikun.github.io/flick/",
+  "redirect_uris": ["https://tomokikun.github.io/flick/oauth/callback/"],
+  "token_endpoint_auth_method": "none",
+  "grant_types": ["authorization_code", "refresh_token"],
+  "response_types": ["code"],
+  "scope": "data:read_write data:delete"
+}

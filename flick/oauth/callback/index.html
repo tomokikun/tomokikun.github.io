@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>flick に戻る</title>
+<!--
+  Todoist の OAuth リダイレクト受け。
+
+  Client ID Metadata Document 方式では redirect_uri が HTTPS 必須で、カスタム
+  スキームを直接登録できない。そこでこのページがクエリをそのまま
+  flick://oauth/callback へ中継する(redirect bounce)。ASWebAuthenticationSession が
+  カスタムスキームへの遷移を横取りしてアプリに返す。
+
+  - クエリは **丸ごと** 透過する(error=access_denied も同じ経路で返るため)。
+  - state の検証や code の解釈はアプリ側の責務。このページは何も判断しない。
+  - 自動遷移がブロックされた場合に備え、手動リンクを常に表示する。
+  - 認可コードが一時的に URL に載るため、**サードパーティのスクリプトを絶対に置かない**。
+-->
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    margin: 0; min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", sans-serif;
+    background: #fff; color: #1c1b1f;
+  }
+  @media (prefers-color-scheme: dark) {
+    body { background: #141218; color: #e6e0e9; }
+  }
+  main { text-align: center; padding: 2rem 1.5rem; max-width: 22rem; }
+  h1 { font-size: 1.25rem; font-weight: 600; margin: 0 0 .75rem; }
+  p { font-size: .9375rem; line-height: 1.7; opacity: .75; margin: 0 0 1.5rem; }
+  a.back {
+    display: inline-block; padding: .875rem 2rem; border-radius: 999px;
+    background: #e44332; color: #fff; text-decoration: none; font-weight: 600;
+  }
+  a.back:hover { opacity: .9; }
+</style>
+</head>
+<body>
+<main>
+  <h1>連携が完了しました</h1>
+  <p>flick に自動で戻ります。戻らない場合は下のボタンを押してください。</p>
+  <a class="back" id="back" href="flick://oauth/callback">flick に戻る</a>
+</main>
+<script>
+  (function () {
+    // クエリを丸ごと透過する(code / state / error / error_description すべて)。
+    var target = 'flick://oauth/callback' + window.location.search;
+    document.getElementById('back').href = target;
+
+    // 認可コードをアドレスバー・履歴に残さない。
+    if (window.history && window.history.replaceState) {
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+
+    window.location.replace(target);
+  })();
+</script>
+</body>
+</html>
