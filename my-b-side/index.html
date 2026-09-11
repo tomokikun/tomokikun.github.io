@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>MY B-SIDE</title>
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+                font-family: Arial, sans-serif;
+                overflow: hidden;
+                background: #f0f0f0;
+            }
+
+            #sketch-container {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+            }
+
+            #timer {
+                position: absolute;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                font-size: clamp(14px, 4vw, 24px);
+                color: #aaa;
+                padding: 8px 16px;
+                pointer-events: none;
+                font-weight: 500;
+                z-index: 10;
+                opacity: 0;
+                transition: opacity 1s ease-in-out;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="sketch-container"></div>
+        <div id="timer">0</div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.0/p5.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/p5.brush@1.1.4/dist/p5.brush.js"></script>
+        <script src="main.js"></script>
+    </body>
+</html>
